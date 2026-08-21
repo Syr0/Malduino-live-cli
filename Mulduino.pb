@@ -144,6 +144,10 @@ EndIf
 
 PrintN("Connected. Usage: list, mem, format, run <file>, stop, create <scriptname>, read <file>, delete <file>, rename <old> <new>, edit <file>, exit")
 
+
+        WSTransaction(Connection, "stop " + #DQUOTE$ + "temp" + #DQUOTE$)
+        PrintN(WSTransaction(Connection, "create " + #DQUOTE$ + "temp" + #DQUOTE$))
+        
 Repeat
   Print("> ")
   Define CmdLine.s = Input()
@@ -190,22 +194,25 @@ Repeat
           If L = "EOF"
             Break
           EndIf
-          NewContent + L + #LF$
+          NewContent  + #LF$ + "STRING "+ L
         ForEver
         WriteFile2(Connection, Arg1, NewContent)
         PrintN(Str(Len(NewContent))+ " characters written.")
       EndIf
     Case "exit"
       Break
+    Default
+      WriteFile2(Connection, "temp", "STRING "+CmdLine)
+      PrintN(WSTransaction(Connection, "run " + #DQUOTE$ + "temp" + #DQUOTE$))
   EndSelect
 ForEver
 
 CloseNetworkConnection(Connection)
 CloseConsole()
 ; IDE Options = PureBasic 6.21 (Windows - x64)
-; CursorPosition = 195
-; FirstLine = 58
-; Folding = 5
+; CursorPosition = 204
+; FirstLine = 159
+; Folding = 0
 ; EnableXP
 ; DPIAware
 ; Executable = cli.exe
